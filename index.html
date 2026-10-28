@@ -399,12 +399,8 @@
 <!-- ASSISTENTE IA -->
 <div class="page" id="page-assistente"><div class="container">
     <div class="section-head"><h2>Assistente IA de Biologia</h2><p>Tira dúvidas, pede resumos e estuda com inteligência artificial</p></div>
-    <div id="apiKeyBox" style="background:#fff8e1;border:1px solid #f0c040;border-radius:12px;padding:1rem 1.2rem;margin-bottom:1rem;max-width:800px;margin-left:auto;margin-right:auto;display:none">
-        <p style="font-size:.85rem;color:#7a5a00;margin-bottom:.6rem"><i class="fas fa-key"></i> <strong>Insere a tua chave do Google Gemini</strong> (gratuita em aistudio.google.com):</p>
-        <div style="display:flex;gap:.5rem">
-            <input id="apiKeyInput" type="password" placeholder="AIza... (chave do Google Gemini)" style="flex:1;padding:.55rem .9rem;border:1.5px solid #d0e8da;border-radius:10px;font-size:.85rem;font-family:'DM Sans',sans-serif;outline:none">
-            <button class="btn btn-green btn-sm" onclick="saveApiKey()"><i class="fas fa-save"></i> Guardar</button>
-        </div>
+    <div style="background:#eef8f0;border:1px solid #b9dfc3;border-radius:12px;padding:.8rem 1rem;margin-bottom:1rem;max-width:800px;margin-left:auto;margin-right:auto;color:#245c38;font-size:.88rem">
+        <i class="fas fa-shield-alt"></i> <strong>BioAssistente disponível:</strong> faz a tua pergunta abaixo. A ligação à inteligência artificial é protegida pelo servidor.
     </div>
     <div class="ai-chips">
         <button class="chip" onclick="chipSend('Explica-me o que é a fotossíntese')">🌿 Fotossíntese</button>
@@ -668,7 +664,7 @@ function go(page, linkEl) {
     if(page==='disciplinas') renderDiscView();
     if(page==='biblioteca') renderBib('todos');
     if(page==='admin') renderAdmin();
-    if(page==='assistente') checkApiKey();
+    if(page==='assistente') 
     window.scrollTo({top:0,behavior:'smooth'});
     return false;
 }
@@ -962,38 +958,32 @@ function appendMsg(role,html){
 function showTyping(){return appendMsg('bot','<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>');}
 async function sendAI(){
     const input=document.getElementById('aiInput');
-    const text=input.value.trim();if(!text)return;
-    input.value='';appendMsg('user',esc(text));const typing=showTyping();
+    const question=input.value.trim();
+    if(!question)return;
+    input.value='';
+    appendMsg('user',esc(question));
+    const typing=showTyping();
     try{
-        const apiKey = document.getElementById('apiKeyInput')?.value?.trim() || localStorage.getItem('bioedu_apikey') || '';
-        if(!apiKey){typing.remove();appendMsg('bot','⚠️ Chave de API não configurada. Insere a tua chave do Google Gemini na caixa acima.');return;}
-        const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,{
-            method:'POST',headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({
-                contents:[{parts:[{text:`És o BioAssistente da Universidade Rovuma, especialista em biologia para estudantes da Licenciatura em Ensino de Biologia. Respondes sempre em Português de Moçambique. Usas linguagem clara, pedagógica e motivadora. Quando pedido, fazes resumos estruturados. Podes usar emojis científicos com moderação.\n\nPergunta do estudante: ${text}`}]}],
-                generationConfig:{maxOutputTokens:1000}
-            })
+        const res=await fetch('/.netlify/functions/ask',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({question})
         });
-        const data=await res.json();
-        if(data.error){typing.remove();appendMsg('bot','⚠️ Erro: '+esc(data.error.message));return;}
-        const reply=data.candidates?.[0]?.content?.parts?.[0]?.text||'Sem resposta.';
+        const data=await res.json().catch(()=>({}));
+        if(!res.ok){
+            typing.remove();
+            appendMsg('bot','⚠️ '+esc(data.error||'Não foi possível obter uma resposta. Tenta novamente mais tarde.'));
+            return;
+        }
+        const reply=data.reply||'Não foi possível gerar uma resposta.';
         typing.remove();
         appendMsg('bot',esc(reply).replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>'));
-    }catch(e){typing.remove();appendMsg('bot','⚠️ Erro de ligação: '+esc(e.message)+'. Se estás a abrir o ficheiro localmente, hospeda-o no Netlify para a IA funcionar.');}
+    }catch(e){
+        typing.remove();
+        appendMsg('bot','⚠️ Não foi possível ligar ao assistente. Confirma se o site está publicado no Netlify e tenta novamente.');
+    }
 }
 function chipSend(text){document.getElementById('aiInput').value=text;sendAI();}
-function saveApiKey(){
-    const key=document.getElementById('apiKeyInput').value.trim();
-    if(!key){alert('Escreve a chave de API.');return;}
-    localStorage.setItem('bioedu_apikey',key);
-    document.getElementById('apiKeyBox').style.display='none';
-    appendMsg('bot','✅ Chave guardada! Já podes usar o assistente.');
-}
-function checkApiKey(){
-    const key=localStorage.getItem('bioedu_apikey');
-    if(!key) document.getElementById('apiKeyBox').style.display='block';
-}
-
 /* ─── UTILS ─── */
 function esc(str){return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
