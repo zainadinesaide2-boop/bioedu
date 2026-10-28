@@ -1,0 +1,22 @@
+BIOEDU — ASSISTENTE DE IA COM CHAVE PROTEGIDA
+
+O QUE ESTÁ INCLUÍDO
+- index.html: interface do BioEdu alterada para chamar o serviço protegido.
+- netlify/functions/ask.js: serviço que chama a API do Gemini sem expor a chave ao navegador.
+- netlify.toml: configuração de publicação no Netlify.
+
+IMPORTANTE
+Não coloques a chave Gemini no index.html, no JavaScript público, no GitHub, nem neste pacote.
+
+CONFIGURAÇÃO
+1. Envia estes ficheiros para um repositório GitHub (mantendo a pasta netlify/functions/ask.js e o netlify.toml na raiz).
+2. No Netlify, cria/importa um site a partir desse repositório.
+3. Nas definições do site no Netlify, vai a Environment variables.
+4. Cria a variável GEMINI_API_KEY e coloca o valor da chave Gemini no campo de valor. Restringe o âmbito a Functions, se essa opção estiver disponível.
+5. Faz novo deploy/publicação do site.
+6. Testa o assistente no endereço do Netlify. O endpoint usado é /.netlify/functions/ask.
+
+A chave é guardada nas variáveis de ambiente do Netlify, não no código público. Como o site fica acessível a todos, configura limites de utilização/quota na Google AI e monitoriza o consumo. O código atual limita o tamanho da pergunta, mas não implementa um sistema completo de limite por visitante.
+
+MODELO
+A função usa o identificador gemini-3.8-flash indicado na documentação atual da Gemini API. A disponibilidade depende da tua chave, projeto e condições da API.
