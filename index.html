@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BioEdu – Universidade Rovuma</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;1,300&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --green-900:#0f2a1a;--green-800:#1b4332;--green-700:#2d6a4f;
+            --green-500:#40916c;--green-300:#74c69d;--green-100:#d8f3dc;--green-50:#f0faf3;
+            --gold:#c9a84c;--gold-light:#f0d87a;--white:#ffffff;
+            --text:#1a2e25;--muted:#5a7a68;
+            --shadow-sm:0 2px 8px rgba(15,42,26,.07);
+            --shadow-md:0 6px 24px rgba(15,42,26,.12);
+            --radius:16px;
+        }
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'DM Sans',sans-serif;background:var(--green-50);color:var(--text);line-height:1.65;}
+
+        /* NAVBAR */
+        .navbar{background:var(--green-900);padding:.9rem 1.5rem;position:fixed;width:100%;top:0;z-index:1000;box-shadow:0 2px 20px rgba(0,0,0,.3);}
+        .nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:1rem;}
+        .logo{display:flex;align-items:center;gap:.6rem;color:var(--white);font-family:'Fraunces',serif;font-size:1.35rem;font-weight:700;text-decoration:none;white-space:nowrap;cursor:pointer;}
+        .logo span.accent{color:var(--gold-light);}
+        .logo i{color:var(--green-300);}
+        .nav-links{display:flex;gap:.2rem;list-style:none;align-items:center;}
+        .nav-links a{color:rgba(255,255,255,.75);text-decoration:none;font-size:.88rem;font-weight:500;padding:.45rem .9rem;border-radius:30px;transition:.25s;cursor:pointer;}
+        .nav-links a:hover,.nav-links a.active{color:var(--white);background:rgba(255,255,255,.12);}
+        .nav-user{display:flex;align-items:center;gap:.5rem;color:var(--green-300);font-size:.82rem;}
+        .nav-user span{color:var(--white);}
+        .hamburger{display:none;background:none;border:none;color:var(--white);font-size:1.4rem;cursor:pointer;}
+
+        /* LOGIN SCREEN */
+        .login-screen{position:fixed;inset:0;background:linear-gradient(150deg,var(--green-900),var(--green-700));display:flex;align-items:center;justify-content:center;z-index:2000;padding:1rem;}
+        .login-box{background:var(--white);border-radius:24px;padding:2.5rem 2rem;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,.3);}
+        .login-logo{text-align:center;margin-bottom:1.8rem;}
+        .login-logo i{font-size:2.5rem;color:var(--green-700);}
+        .login-logo h2{font-family:'Fraunces',serif;color:var(--green-800);font-size:1.6rem;margin-top:.5rem;}
+        .login-logo p{color:var(--muted);font-size:.85rem;}
+        .login-tabs{display:flex;gap:.4rem;margin-bottom:1.5rem;}
+        .ltab{flex:1;padding:.55rem;border-radius:10px;border:none;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:.2s;}
+        .ltab.active{background:var(--green-700);color:var(--white);}
+        .ltab:not(.active){background:var(--green-100);color:var(--green-800);}
+        .form-group{margin-bottom:1rem;}
+        .form-group label{display:block;font-size:.82rem;font-weight:600;color:var(--green-800);margin-bottom:.35rem;}
+        .form-group input,.form-group select{width:100%;padding:.7rem 1rem;border:1.5px solid #d0e8da;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.9rem;color:var(--text);background:var(--green-50);outline:none;transition:.2s;}
+        .form-group input:focus{border-color:var(--green-700);}
+        .login-err{background:#ffe5e5;color:#c0392b;padding:.6rem 1rem;border-radius:10px;font-size:.82rem;margin-bottom:1rem;display:none;}
+        .login-hint{background:var(--green-100);color:var(--green-800);padding:.7rem 1rem;border-radius:10px;font-size:.8rem;margin-top:1rem;}
+
+        /* HERO */
+        .hero{margin-top:62px;background:linear-gradient(150deg,var(--green-900) 0%,var(--green-700) 60%,var(--green-500) 100%);color:var(--white);padding:5.5rem 1.5rem 4rem;text-align:center;position:relative;overflow:hidden;}
+        .hero-dots{position:absolute;inset:0;background:radial-gradient(circle,rgba(255,255,255,.04) 1px,transparent 1px);background-size:44px 44px;animation:drift 30s linear infinite;}
+        @keyframes drift{to{background-position:44px 44px;}}
+        .hero-content{position:relative;z-index:1;max-width:780px;margin:0 auto;}
+        .hero-eyebrow{display:inline-block;background:rgba(201,168,76,.2);border:1px solid rgba(201,168,76,.4);color:var(--gold-light);font-size:.8rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:.35rem 1rem;border-radius:30px;margin-bottom:1.4rem;}
+        .hero h1{font-family:'Fraunces',serif;font-size:clamp(2rem,5vw,3.4rem);font-weight:700;line-height:1.15;margin-bottom:1rem;}
+        .hero h1 em{font-style:italic;color:var(--green-300);}
+        .hero p{font-size:1.05rem;opacity:.85;max-width:600px;margin:0 auto 2rem;}
+        .hero-actions{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;}
+        .btn{display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 1.8rem;border-radius:30px;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;border:none;text-decoration:none;transition:.25s;white-space:nowrap;}
+        .btn-primary{background:var(--gold);color:var(--green-900);}
+        .btn-primary:hover{background:var(--gold-light);transform:translateY(-2px);box-shadow:var(--shadow-md);}
+        .btn-outline{background:transparent;border:2px solid rgba(255,255,255,.4);color:var(--white);}
+        .btn-outline:hover{background:rgba(255,255,255,.1);}
+        .btn-green{background:var(--green-700);color:var(--white);}
+        .btn-green:hover{background:var(--green-500);transform:translateY(-2px);}
+        .btn-red{background:#e63946;color:var(--white);}
+        .btn-red:hover{background:#c0392b;}
+        .btn-sm{padding:.5rem 1.2rem;font-size:.82rem;}
+        .hero-badges{display:flex;justify-content:center;flex-wrap:wrap;gap:.7rem;margin-top:2.2rem;}
+        .badge{background:rgba(255,255,255,.1);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.15);color:var(--white);font-size:.8rem;font-weight:500;padding:.35rem 1rem;border-radius:20px;}
+
+        /* LAYOUT */
+        .page{display:none;}
+        .page.active{display:block;animation:pageIn .4s ease;}
+        @keyframes pageIn{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+        .container{max-width:1200px;margin:0 auto;padding:3.5rem 1.5rem;}
+        .section-head{text-align:center;margin-bottom:2.8rem;}
+        .section-head h2{font-family:'Fraunces',serif;font-size:clamp(1.6rem,3.5vw,2.4rem);color:var(--green-800);margin-bottom:.4rem;}
+        .section-head p{color:var(--muted);font-size:.95rem;}
+
+        /* CARDS */
+        .cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;}
+        .card{background:var(--white);border-radius:var(--radius);padding:2rem;box-shadow:var(--shadow-sm);border:1px solid rgba(45,106,79,.08);transition:.3s;}
+        .card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md);}
+        .card-icon{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--green-700),var(--green-300));display:flex;align-items:center;justify-content:center;color:var(--white);font-size:1.3rem;margin-bottom:1.2rem;}
+        .card h3{font-size:1.05rem;color:var(--green-800);margin-bottom:.5rem;}
+        .card p{color:var(--muted);font-size:.88rem;}
+
+        /* TIMELINE */
+        .timeline{position:relative;padding-left:2.5rem;}
+        .timeline::before{content:'';position:absolute;left:10px;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,var(--green-700),var(--green-300));border-radius:3px;}
+        .timeline-item{position:relative;margin-bottom:2rem;background:var(--white);padding:1.5rem;border-radius:var(--radius);box-shadow:var(--shadow-sm);}
+        .timeline-item::before{content:'';position:absolute;left:-2.2rem;top:1.4rem;width:18px;height:18px;background:var(--green-700);border-radius:50%;border:4px solid var(--green-50);}
+        .year-tag{display:inline-block;background:var(--green-100);color:var(--green-800);padding:.25rem .9rem;border-radius:20px;font-size:.78rem;font-weight:600;margin-bottom:.6rem;}
+        .timeline-item h3{color:var(--green-800);font-size:1rem;margin-bottom:.35rem;}
+        .timeline-item p{color:var(--muted);font-size:.88rem;}
+
+        /* DISCIPLINAS */
+        .disc-wrapper{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden;}
+        .disc-tabs{display:flex;gap:.4rem;padding:1.2rem 1.5rem;border-bottom:1px solid var(--green-100);flex-wrap:wrap;}
+        .tab-btn{padding:.45rem 1.1rem;border-radius:20px;border:2px solid var(--green-700);background:transparent;color:var(--green-700);font-weight:600;font-size:.82rem;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.2s;}
+        .tab-btn.active,.tab-btn:hover{background:var(--green-700);color:var(--white);}
+        .sem-panel{display:none;padding:1rem 1.5rem 1.5rem;}
+        .sem-panel.active{display:block;}
+        .disc-item{display:flex;align-items:center;gap:1rem;padding:.9rem .5rem;border-bottom:1px solid #f0f4f2;transition:.2s;}
+        .disc-item:last-child{border-bottom:none;}
+        .disc-item:hover{background:var(--green-50);border-radius:10px;}
+        .disc-code{background:var(--green-700);color:var(--white);padding:.25rem .7rem;border-radius:8px;font-size:.75rem;font-weight:700;min-width:72px;text-align:center;}
+        .disc-info{flex:1;}
+        .disc-info h4{color:var(--green-800);font-size:.9rem;margin-bottom:.15rem;}
+        .disc-info span{color:var(--muted);font-size:.8rem;}
+        .disc-credits{background:var(--green-100);color:var(--green-800);padding:.25rem .8rem;border-radius:20px;font-size:.8rem;font-weight:600;}
+        .disc-actions{display:flex;gap:.4rem;}
+        .btn-icon{background:none;border:none;cursor:pointer;color:var(--muted);font-size:.95rem;padding:.3rem;border-radius:6px;transition:.2s;}
+        .btn-icon:hover{color:var(--green-700);background:var(--green-100);}
+        .btn-icon.danger:hover{color:#c0392b;background:#ffe5e5;}
+        .add-disc-row{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem;padding-top:1rem;border-top:2px dashed var(--green-100);}
+        .add-disc-row input,.add-disc-row select{padding:.55rem .9rem;border:1.5px solid #d0e8da;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.85rem;color:var(--text);background:var(--green-50);outline:none;transition:.2s;}
+        .add-disc-row input:focus{border-color:var(--green-700);}
+        .input-code{width:90px;}.input-name{flex:1;min-width:160px;}.input-desc{flex:2;min-width:160px;}.input-cr{width:75px;}
+        .aulas-section{margin-top:1rem;}
+        .aulas-list{display:flex;flex-direction:column;gap:.7rem;}
+        .aula-card{background:var(--white);border-radius:12px;padding:1rem 1.2rem;border-left:4px solid var(--green-500);box-shadow:var(--shadow-sm);display:flex;align-items:flex-start;gap:1rem;}
+        .aula-num{background:var(--green-700);color:var(--white);width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;flex-shrink:0;}
+        .aula-body{flex:1;}
+        .aula-body h4{color:var(--green-800);font-size:.9rem;margin-bottom:.2rem;}
+        .aula-body p{color:var(--muted);font-size:.82rem;}
+        .aula-meta{font-size:.76rem;color:var(--muted);margin-top:.3rem;}
+        .add-aula-row{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem;padding-top:1rem;border-top:2px dashed var(--green-100);}
+        .add-aula-row input,.add-aula-row select{padding:.55rem .9rem;border:1.5px solid #d0e8da;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.85rem;color:var(--text);background:var(--green-50);outline:none;transition:.2s;flex:1;min-width:140px;}
+
+        /* BIBLIOTECA */
+        .biblioteca-filters{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem;}
+        .filter-btn{padding:.4rem 1rem;border-radius:20px;border:2px solid var(--green-300);background:transparent;color:var(--green-700);font-size:.82rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.2s;}
+        .filter-btn.active,.filter-btn:hover{background:var(--green-700);color:var(--white);border-color:var(--green-700);}
+        .biblioteca-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1.2rem;}
+        .bib-card{background:var(--white);border-radius:14px;padding:1.4rem;box-shadow:var(--shadow-sm);border:1px solid rgba(45,106,79,.08);transition:.3s;cursor:pointer;}
+        .bib-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);}
+        .bib-type{display:inline-block;padding:.2rem .7rem;border-radius:20px;font-size:.72rem;font-weight:700;text-transform:uppercase;margin-bottom:.8rem;}
+        .bib-type.livro{background:#dbeafe;color:#1e40af;}
+        .bib-type.manual{background:#fef3c7;color:#92400e;}
+        .bib-type.teste{background:#ede9fe;color:#5b21b6;}
+        .bib-type.resumo{background:#dcfce7;color:#166534;}
+        .bib-card h4{color:var(--green-800);font-size:.92rem;font-weight:600;margin-bottom:.4rem;}
+        .bib-card p{color:var(--muted);font-size:.8rem;margin-bottom:.8rem;}
+        .bib-card-footer{display:flex;align-items:center;justify-content:space-between;}
+        .bib-cadeira{font-size:.75rem;color:var(--muted);}
+        .bib-download{background:var(--green-700);color:var(--white);padding:.3rem .8rem;border-radius:8px;font-size:.75rem;font-weight:600;text-decoration:none;transition:.2s;}
+        .bib-download:hover{background:var(--green-500);}
+        .bib-empty{text-align:center;padding:3rem;color:var(--muted);}
+        .bib-empty i{font-size:3rem;margin-bottom:1rem;opacity:.4;}
+
+        /* ADD BIBLIOTECA FORM */
+        .add-bib-form{background:var(--white);border-radius:var(--radius);padding:1.5rem;box-shadow:var(--shadow-sm);margin-bottom:2rem;}
+        .add-bib-form h3{font-family:'Fraunces',serif;color:var(--green-800);margin-bottom:1rem;font-size:1.1rem;}
+        .form-row{display:flex;gap:.8rem;flex-wrap:wrap;margin-bottom:.8rem;}
+        .form-row input,.form-row select,.form-row textarea{padding:.6rem .9rem;border:1.5px solid #d0e8da;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.85rem;color:var(--text);background:var(--green-50);outline:none;transition:.2s;flex:1;min-width:140px;}
+        .form-row input:focus,.form-row select:focus,.form-row textarea:focus{border-color:var(--green-700);}
+
+        /* QUIZ */
+        .quiz-wrap{background:var(--white);border-radius:var(--radius);padding:2rem;box-shadow:var(--shadow-sm);max-width:680px;margin:0 auto;}
+        .quiz-prog{display:flex;align-items:center;gap:1rem;margin-bottom:1.8rem;}
+        .prog-bar{flex:1;height:8px;background:#e0ece5;border-radius:4px;overflow:hidden;}
+        .prog-fill{height:100%;background:linear-gradient(90deg,var(--green-700),var(--green-300));border-radius:4px;transition:width .5s ease;}
+        .prog-label{font-size:.82rem;color:var(--muted);white-space:nowrap;}
+        .q-text{font-size:1.1rem;color:var(--green-800);font-weight:600;margin-bottom:1.2rem;}
+        .q-options{display:flex;flex-direction:column;gap:.8rem;}
+        .q-opt{padding:.85rem 1.2rem;border:2px solid #e0ece5;border-radius:12px;cursor:pointer;display:flex;align-items:center;gap:.8rem;transition:.2s;font-size:.9rem;}
+        .q-opt:hover{border-color:var(--green-500);background:var(--green-50);}
+        .q-opt.correct{border-color:var(--green-700);background:var(--green-100);color:var(--green-800);}
+        .q-opt.wrong{border-color:#e63946;background:#ffe5e5;}
+        .q-explain{margin-top:1.2rem;padding:1rem 1.2rem;background:var(--green-50);border-radius:12px;font-size:.88rem;color:var(--text);display:none;}
+        .score-wrap{text-align:center;padding:2rem 1rem;}
+        .score-circle{width:130px;height:130px;border-radius:50%;background:linear-gradient(135deg,var(--green-700),var(--green-300));display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem;color:var(--white);font-family:'Fraunces',serif;font-size:2.4rem;font-weight:700;}
+        .score-wrap h3{font-size:1.2rem;color:var(--green-800);margin-bottom:.4rem;}
+        .score-wrap p{color:var(--muted);margin-bottom:1.5rem;}
+
+        /* ASSISTENTE IA */
+        .ai-wrap{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden;max-width:800px;margin:0 auto;display:flex;flex-direction:column;height:520px;}
+        .ai-header{background:linear-gradient(135deg,var(--green-900),var(--green-700));padding:1rem 1.4rem;display:flex;align-items:center;gap:.8rem;}
+        .ai-avatar{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;color:var(--green-300);font-size:1.2rem;}
+        .ai-header-info h3{color:var(--white);font-size:.95rem;}
+        .ai-header-info span{color:var(--green-300);font-size:.78rem;}
+        .ai-status{width:8px;height:8px;background:#4ade80;border-radius:50%;animation:pulse 2s infinite;margin-left:auto;}
+        @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+        .ai-messages{flex:1;overflow-y:auto;padding:1.2rem;display:flex;flex-direction:column;gap:.8rem;background:var(--green-50);}
+        .msg{display:flex;gap:.7rem;align-items:flex-start;max-width:88%;}
+        .msg.user{align-self:flex-end;flex-direction:row-reverse;}
+        .msg-bubble{padding:.75rem 1rem;border-radius:16px;font-size:.88rem;line-height:1.55;}
+        .msg.bot .msg-bubble{background:var(--white);color:var(--text);border-radius:4px 16px 16px 16px;box-shadow:var(--shadow-sm);}
+        .msg.user .msg-bubble{background:var(--green-700);color:var(--white);border-radius:16px 4px 16px 16px;}
+        .msg-icon{width:30px;height:30px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.85rem;}
+        .msg.bot .msg-icon{background:var(--green-100);color:var(--green-700);}
+        .msg.user .msg-icon{background:rgba(64,145,108,.2);color:var(--green-300);}
+        .typing-dot{display:inline-block;width:7px;height:7px;background:var(--green-500);border-radius:50%;animation:blink 1.2s infinite;}
+        .typing-dot:nth-child(2){animation-delay:.2s;}
+        .typing-dot:nth-child(3){animation-delay:.4s;}
+        @keyframes blink{0%,80%,100%{opacity:0;}40%{opacity:1;}}
+        .ai-input-row{display:flex;gap:.6rem;padding:.9rem 1rem;border-top:1px solid var(--green-100);background:var(--white);}
+        .ai-input{flex:1;padding:.7rem 1rem;border:1.5px solid #d0e8da;border-radius:30px;font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--text);background:var(--green-50);outline:none;transition:.2s;}
+        .ai-input:focus{border-color:var(--green-700);}
+        .ai-send{width:40px;height:40px;border-radius:50%;background:var(--green-700);border:none;color:var(--white);font-size:1rem;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;}
+        .ai-send:hover{background:var(--green-500);}
+        .ai-chips{display:flex;gap:.5rem;flex-wrap:wrap;padding:.5rem 1rem 0;}
+        .chip{background:var(--green-100);color:var(--green-800);padding:.3rem .8rem;border-radius:20px;font-size:.76rem;font-weight:500;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:.2s;}
+        .chip:hover{background:var(--green-300);}
+
+        /* RECURSOS */
+        .resource-list{display:flex;flex-direction:column;gap:.8rem;max-width:780px;margin:0 auto;}
+        .resource-link{display:flex;align-items:center;gap:1.2rem;background:var(--white);padding:1.2rem 1.5rem;border-radius:14px;box-shadow:var(--shadow-sm);text-decoration:none;color:inherit;transition:.25s;}
+        .resource-link:hover{transform:translateX(4px);box-shadow:var(--shadow-md);}
+        .res-icon{width:46px;height:46px;border-radius:12px;background:var(--green-100);color:var(--green-700);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+        .res-info h4{color:var(--green-800);font-size:.92rem;margin-bottom:.15rem;}
+        .res-info p{color:var(--muted);font-size:.82rem;}
+        .res-arrow{margin-left:auto;color:var(--green-300);}
+
+        /* ADMIN */
+        .admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem;}
+        .admin-header h2{font-family:'Fraunces',serif;font-size:1.6rem;color:var(--green-800);}
+        .admin-notice{background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3);color:#7a5a00;padding:.7rem 1.2rem;border-radius:12px;font-size:.84rem;margin-bottom:1.5rem;}
+        .admin-tabs{display:flex;gap:.4rem;margin-bottom:1.5rem;flex-wrap:wrap;}
+        .a-tab{padding:.5rem 1.2rem;border-radius:20px;border:none;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:.2s;}
+        .a-tab.active{background:var(--green-700);color:var(--white);}
+        .a-tab:not(.active){background:var(--green-100);color:var(--green-800);}
+        .a-tab:not(.active):hover{background:var(--green-300);}
+        .admin-panel{display:none;}
+        .admin-panel.active{display:block;animation:pageIn .3s ease;}
+        .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-bottom:2rem;}
+        .stat-card{background:var(--white);border-radius:14px;padding:1.2rem;box-shadow:var(--shadow-sm);text-align:center;}
+        .stat-card .num{font-family:'Fraunces',serif;font-size:2rem;color:var(--green-700);}
+        .stat-card .lbl{font-size:.78rem;color:var(--muted);}
+
+        /* UTILIZADORES ADMIN */
+        .user-table{width:100%;border-collapse:collapse;background:var(--white);border-radius:14px;overflow:hidden;box-shadow:var(--shadow-sm);}
+        .user-table th{background:var(--green-800);color:var(--white);padding:.8rem 1rem;text-align:left;font-size:.82rem;}
+        .user-table td{padding:.75rem 1rem;border-bottom:1px solid var(--green-100);font-size:.85rem;color:var(--text);}
+        .user-table tr:last-child td{border-bottom:none;}
+        .role-badge{padding:.2rem .7rem;border-radius:20px;font-size:.72rem;font-weight:700;}
+        .role-badge.admin{background:#fef3c7;color:#92400e;}
+        .role-badge.user{background:var(--green-100);color:var(--green-800);}
+
+        /* FOOTER */
+        footer{background:var(--green-900);color:rgba(255,255,255,.75);padding:3rem 1.5rem 1rem;margin-top:4rem;}
+        .footer-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2rem;margin-bottom:2rem;}
+        footer h3{color:var(--green-300);font-family:'Fraunces',serif;margin-bottom:.8rem;}
+        footer a{color:rgba(255,255,255,.65);text-decoration:none;display:block;line-height:2;cursor:pointer;}
+        footer a:hover{color:var(--green-300);}
+        .footer-bottom{text-align:center;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,.08);font-size:.8rem;color:rgba(255,255,255,.4);}
+
+        /* RESPONSIVE */
+        @media(max-width:768px){
+            .nav-links{display:none;position:absolute;top:100%;left:0;right:0;background:var(--green-900);flex-direction:column;padding:.8rem;gap:.2rem;}
+            .nav-links.open{display:flex;}
+            .hamburger{display:block;}
+            .hero{padding:3.5rem 1.2rem 2.5rem;}
+            .container{padding:2.5rem 1rem;}
+        }
+        .mt1{margin-top:1rem;}.mt2{margin-top:2rem;}
+    </style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div class="login-screen" id="loginScreen">
+    <div class="login-box">
+        <div class="login-logo">
+            <i class="fas fa-dna"></i>
+            <h2>BioEdu</h2>
+            <p>Universidade Rovuma — Ensino de Biologia</p>
+        </div>
+        <div class="login-tabs">
+            <button class="ltab active" onclick="lTab('login',this)">Entrar</button>
+            <button class="ltab" onclick="lTab('register',this)">Registar</button>
+        </div>
+
+        <!-- LOGIN -->
+        <div id="lp-login">
+            <div class="form-group"><label>Email</label><input type="email" id="l-email" placeholder="o.teu@email.com"></div>
+            <div class="form-group"><label>Password</label><input type="password" id="l-pass" placeholder="••••••••"></div>
+            <div class="login-err" id="l-err"></div>
+            <button class="btn btn-green" style="width:100%;justify-content:center" onclick="doLogin()"><i class="fas fa-sign-in-alt"></i> Entrar</button>
+            <div class="login-hint"><strong>Demo Admin:</strong> admin@bioedu.mz / admin123<br><strong>Demo Utilizador:</strong> user@bioedu.mz / user123</div>
+        </div>
+
+        <!-- REGISTER -->
+        <div id="lp-register" style="display:none">
+            <div class="form-group"><label>Nome completo</label><input type="text" id="r-name" placeholder="O teu nome"></div>
+            <div class="form-group"><label>Email</label><input type="email" id="r-email" placeholder="o.teu@email.com"></div>
+            <div class="form-group"><label>Password</label><input type="password" id="r-pass" placeholder="mínimo 6 caracteres"></div>
+            <div class="login-err" id="r-err"></div>
+            <button class="btn btn-green" style="width:100%;justify-content:center" onclick="doRegister()"><i class="fas fa-user-plus"></i> Criar Conta</button>
+        </div>
+    </div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="mainNav" style="display:none">
+    <div class="nav-inner">
+        <div class="logo" onclick="go('home',null)"><i class="fas fa-dna"></i>Bio<span class="accent">Edu</span></div>
+        <ul class="nav-links" id="navLinks">
+            <li><a data-page="home" onclick="go('home',this)">Início</a></li>
+            <li><a data-page="sobre" onclick="go('sobre',this)">Sobre</a></li>
+            <li><a data-page="disciplinas" onclick="go('disciplinas',this)">Disciplinas</a></li>
+            <li><a data-page="biblioteca" onclick="go('biblioteca',this)">Biblioteca</a></li>
+            <li><a data-page="quiz" onclick="go('quiz',this)">Quiz</a></li>
+            <li><a data-page="assistente" onclick="go('assistente',this)">Assistente IA</a></li>
+            <li><a data-page="recursos" onclick="go('recursos',this)">Recursos</a></li>
+            <li id="navAdmin" style="display:none"><a data-page="admin" onclick="go('admin',this)">⚙ Admin</a></li>
+            <li><a onclick="doLogout()" style="color:#f87171"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+        </ul>
+        <div class="nav-user" id="navUser"></div>
+        <button class="hamburger" onclick="toggleMenu()"><i class="fas fa-bars"></i></button>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="homeHero" style="display:none">
+    <div class="hero-dots"></div>
+    <div class="hero-content">
+        <span class="hero-eyebrow"><i class="fas fa-university"></i> Universidade Rovuma</span>
+        <h1>Licenciatura em <em>Ensino de Biologia</em></h1>
+        <p>Forma-te para inspirar a próxima geração de cientistas. Explora o curso, a biblioteca e estuda com IA.</p>
+        <div class="hero-actions">
+            <button class="btn btn-primary" onclick="go('biblioteca',null)"><i class="fas fa-book-open"></i> Biblioteca</button>
+            <button class="btn btn-outline" onclick="go('assistente',null)"><i class="fas fa-robot"></i> Assistente IA</button>
+        </div>
+        <div class="hero-badges">
+            <span class="badge"><i class="fas fa-graduation-cap"></i> 3 Anos</span>
+            <span class="badge"><i class="fas fa-book"></i> Biblioteca Digital</span>
+            <span class="badge"><i class="fas fa-robot"></i> IA Integrada</span>
+            <span class="badge"><i class="fas fa-flask"></i> Laboratório</span>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ PAGES ═══ -->
+
+<!-- SOBRE -->
+<div class="page" id="page-sobre"><div class="container">
+    <div class="section-head"><h2>Sobre o Curso</h2><p>Licenciatura em Ensino de Biologia — Universidade Rovuma</p></div>
+    <div class="cards-grid">
+        <div class="card"><div class="card-icon"><i class="fas fa-bullseye"></i></div><h3>Objetivos</h3><p>Formar professores com sólidos conhecimentos em biologia, capazes de transmitir conhecimento científico de forma criativa e eficaz.</p></div>
+        <div class="card"><div class="card-icon"><i class="fas fa-user-graduate"></i></div><h3>Perfil do Egresso</h3><p>O licenciado planifica, implementa e avalia atividades de ensino-aprendizagem com metodologias diversificadas.</p></div>
+        <div class="card"><div class="card-icon"><i class="fas fa-briefcase"></i></div><h3>Saídas Profissionais</h3><p>Professor de Biologia no ensino básico e secundário, técnico em museus, jardins botânicos e projetos ambientais.</p></div>
+        <div class="card"><div class="card-icon"><i class="fas fa-microscope"></i></div><h3>Áreas</h3><p>Biologia Celular, Ecologia, Genética, Evolução, Fisiologia, Botânica, Zoologia e Didática das Ciências.</p></div>
+        <div class="card"><div class="card-icon"><i class="fas fa-users"></i></div><h3>Estágio</h3><p>Prática supervisionada em escolas com acompanhamento de professores cooperadores.</p></div>
+        <div class="card"><div class="card-icon"><i class="fas fa-award"></i></div><h3>Certificação</h3><p>Grau de Licenciado em Ensino de Biologia com habilitação profissional para a docência.</p></div>
+    </div>
+    <div class="mt2"><div class="section-head"><h2>Percurso Académico</h2></div>
+    <div class="timeline">
+        <div class="timeline-item"><span class="year-tag">1º Ano</span><h3>Fundamentos Científicos</h3><p>Biologia celular, química e introdução às ciências da educação.</p></div>
+        <div class="timeline-item"><span class="year-tag">2º Ano</span><h3>Aprofundamento e Didática</h3><p>Ecologia, genética, fisiologia e formação pedagógica específica.</p></div>
+        <div class="timeline-item"><span class="year-tag">3º Ano</span><h3>Prática Profissional</h3><p>Estágio pedagógico, seminários de integração e projeto de investigação.</p></div>
+    </div></div>
+</div></div>
+
+<!-- DISCIPLINAS -->
+<div class="page" id="page-disciplinas"><div class="container">
+    <div class="section-head"><h2>Plano Curricular</h2><p>Disciplinas e aulas por semestre</p></div>
+    <div class="disc-wrapper">
+        <div class="disc-tabs">
+            <button class="tab-btn active" onclick="showSem(1,this)">1º Semestre</button>
+            <button class="tab-btn" onclick="showSem(2,this)">2º Semestre</button>
+        </div>
+        <div class="sem-panel active" id="sp1"><div id="disc-list-1"></div></div>
+        <div class="sem-panel" id="sp2"><div id="disc-list-2"></div></div>
+    </div>
+</div></div>
+
+<!-- BIBLIOTECA -->
+<div class="page" id="page-biblioteca"><div class="container">
+    <div class="section-head"><h2>Biblioteca Digital</h2><p>Livros, manuais, testes e resumos para o teu estudo</p></div>
+    <div class="biblioteca-filters">
+        <button class="filter-btn active" onclick="filterBib('todos',this)">Todos</button>
+        <button class="filter-btn" onclick="filterBib('livro',this)">📘 Livros</button>
+        <button class="filter-btn" onclick="filterBib('manual',this)">📋 Manuais</button>
+        <button class="filter-btn" onclick="filterBib('teste',this)">📝 Testes</button>
+        <button class="filter-btn" onclick="filterBib('resumo',this)">✏️ Resumos</button>
+    </div>
+    <div class="biblioteca-grid" id="bibGrid"></div>
+</div></div>
+
+<!-- QUIZ -->
+<div class="page" id="page-quiz"><div class="container">
+    <div class="section-head"><h2>Quiz de Biologia</h2><p>Testa os teus conhecimentos</p></div>
+    <div class="quiz-wrap">
+        <div class="quiz-prog">
+            <span class="prog-label" id="qNum">1 / 5</span>
+            <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:20%"></div></div>
+        </div>
+        <div id="quizBody"></div>
+    </div>
+</div></div>
+
+<!-- ASSISTENTE IA -->
+<div class="page" id="page-assistente"><div class="container">
+    <div class="section-head"><h2>Assistente IA de Biologia</h2><p>Tira dúvidas, pede resumos e estuda com inteligência artificial</p></div>
+    <div id="apiKeyBox" style="background:#fff8e1;border:1px solid #f0c040;border-radius:12px;padding:1rem 1.2rem;margin-bottom:1rem;max-width:800px;margin-left:auto;margin-right:auto;display:none">
+        <p style="font-size:.85rem;color:#7a5a00;margin-bottom:.6rem"><i class="fas fa-key"></i> <strong>Insere a tua chave do Google Gemini</strong> (gratuita em aistudio.google.com):</p>
+        <div style="display:flex;gap:.5rem">
+            <input id="apiKeyInput" type="password" placeholder="AIza... (chave do Google Gemini)" style="flex:1;padding:.55rem .9rem;border:1.5px solid #d0e8da;border-radius:10px;font-size:.85rem;font-family:'DM Sans',sans-serif;outline:none">
+            <button class="btn btn-green btn-sm" onclick="saveApiKey()"><i class="fas fa-save"></i> Guardar</button>
+        </div>
+    </div>
+    <div class="ai-chips">
+        <button class="chip" onclick="chipSend('Explica-me o que é a fotossíntese')">🌿 Fotossíntese</button>
+        <button class="chip" onclick="chipSend('Faz um resumo sobre Genética de Mendel')">🧬 Genética</button>
+        <button class="chip" onclick="chipSend('O que é a respiração celular?')">🔬 Respiração Celular</button>
+        <button class="chip" onclick="chipSend('Explica a Teoria da Evolução de Darwin')">🦋 Evolução</button>
+        <button class="chip" onclick="chipSend('Diferenças entre célula animal e vegetal')">🌱 Células</button>
+    </div>
+    <div style="height:.7rem"></div>
+    <div class="ai-wrap">
+        <div class="ai-header">
+            <div class="ai-avatar"><i class="fas fa-robot"></i></div>
+            <div class="ai-header-info"><h3>BioAssistente</h3><span>Especialista em Biologia · Universidade Rovuma</span></div>
+            <div class="ai-status"></div>
+        </div>
+        <div class="ai-messages" id="aiMessages">
+            <div class="msg bot"><div class="msg-icon"><i class="fas fa-robot"></i></div><div class="msg-bubble">Olá! Sou o BioAssistente da Universidade Rovuma 🌿<br>Posso responder dúvidas, fazer resumos e ajudar-te a estudar. O que precisas?</div></div>
+        </div>
+        <div class="ai-input-row">
+            <input class="ai-input" id="aiInput" placeholder="Escreve a tua dúvida..." onkeydown="if(event.key==='Enter')sendAI()">
+            <button class="ai-send" onclick="sendAI()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+</div></div>
+
+<!-- RECURSOS -->
+<div class="page" id="page-recursos"><div class="container">
+    <div class="section-head"><h2>Recursos Externos</h2><p>Material complementar gratuito</p></div>
+    <div class="resource-list">
+        <a href="https://www.khanacademy.org/science/biology" target="_blank" class="resource-link"><div class="res-icon"><i class="fas fa-globe"></i></div><div class="res-info"><h4>Khan Academy – Biologia</h4><p>Vídeos e exercícios gratuitos sobre todos os temas</p></div><i class="fas fa-arrow-right res-arrow"></i></a>
+        <a href="https://www.biointeractive.org/" target="_blank" class="resource-link"><div class="res-icon"><i class="fas fa-dna"></i></div><div class="res-info"><h4>HHMI BioInteractive</h4><p>Recursos educativos do Howard Hughes Medical Institute</p></div><i class="fas fa-arrow-right res-arrow"></i></a>
+        <a href="https://phet.colorado.edu/pt/simulations/filter?subjects=biology" target="_blank" class="resource-link"><div class="res-icon"><i class="fas fa-flask"></i></div><div class="res-info"><h4>PhET Simulações</h4><p>Simulações interativas de biologia para o ensino</p></div><i class="fas fa-arrow-right res-arrow"></i></a>
+        <a href="https://www.youtube.com/c/CrashCourse" target="_blank" class="resource-link"><div class="res-icon"><i class="fab fa-youtube"></i></div><div class="res-info"><h4>Crash Course Biology</h4><p>Vídeos educativos rápidos e dinâmicos</p></div><i class="fas fa-arrow-right res-arrow"></i></a>
+    </div>
+</div></div>
+
+<!-- ADMIN -->
+<div class="page" id="page-admin"><div class="container">
+    <div class="admin-header">
+        <h2>⚙ Painel de Administração</h2>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+            <button class="btn btn-green btn-sm" onclick="go('disciplinas',null)"><i class="fas fa-eye"></i> Ver Disciplinas</button>
+            <button class="btn btn-green btn-sm" onclick="go('biblioteca',null)"><i class="fas fa-book"></i> Ver Biblioteca</button>
+        </div>
+    </div>
+    <div class="admin-notice"><i class="fas fa-info-circle"></i> Painel restrito a administradores. Todas as alterações são guardadas nesta sessão.</div>
+    <div class="stats-row" id="statsRow"></div>
+    <div class="admin-tabs">
+        <button class="a-tab active" onclick="aTab('cadeiras',this)">Cadeiras</button>
+        <button class="a-tab" onclick="aTab('aulas',this)">Aulas</button>
+        <button class="a-tab" onclick="aTab('biblioteca',this)">Biblioteca</button>
+        <button class="a-tab" onclick="aTab('utilizadores',this)">Utilizadores</button>
+    </div>
+
+    <!-- CADEIRAS -->
+    <div class="admin-panel active" id="ap-cadeiras">
+        <div class="disc-wrapper">
+            <div class="disc-tabs">
+                <button class="tab-btn active" onclick="showAdminSem(1,this)">1º Semestre</button>
+                <button class="tab-btn" onclick="showAdminSem(2,this)">2º Semestre</button>
+            </div>
+            <div class="sem-panel active" id="asp1">
+                <div id="admin-disc-1"></div>
+                <div class="add-disc-row">
+                    <input class="input-code" id="nd1-code" placeholder="Código">
+                    <input class="input-name" id="nd1-name" placeholder="Nome da Cadeira">
+                    <input class="input-desc" id="nd1-desc" placeholder="Descrição">
+                    <input class="input-cr" id="nd1-cr" placeholder="Créditos" type="number" min="1" max="30">
+                    <button class="btn btn-green btn-sm" onclick="addDisc(1)"><i class="fas fa-plus"></i> Adicionar</button>
+                </div>
+            </div>
+            <div class="sem-panel" id="asp2">
+                <div id="admin-disc-2"></div>
+                <div class="add-disc-row">
+                    <input class="input-code" id="nd2-code" placeholder="Código">
+                    <input class="input-name" id="nd2-name" placeholder="Nome da Cadeira">
+                    <input class="input-desc" id="nd2-desc" placeholder="Descrição">
+                    <input class="input-cr" id="nd2-cr" placeholder="Créditos" type="number" min="1" max="30">
+                    <button class="btn btn-green btn-sm" onclick="addDisc(2)"><i class="fas fa-plus"></i> Adicionar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AULAS -->
+    <div class="admin-panel" id="ap-aulas">
+        <div class="disc-wrapper" style="padding:1.2rem 1.5rem">
+            <div class="add-aula-row" style="margin-top:0;border-top:none;padding-top:0;">
+                <select id="aula-sem"><option value="1">1º Semestre</option><option value="2">2º Semestre</option></select>
+                <select id="aula-disc"></select>
+                <input id="aula-titulo" placeholder="Título da Aula">
+                <input id="aula-desc" placeholder="Descrição / conteúdo">
+                <input id="aula-data" type="date">
+                <button class="btn btn-green btn-sm" onclick="addAula()"><i class="fas fa-plus"></i> Adicionar</button>
+            </div>
+            <div id="aulas-admin-list" class="mt1"></div>
+        </div>
+    </div>
+
+    <!-- BIBLIOTECA ADMIN -->
+    <div class="admin-panel" id="ap-biblioteca">
+        <div class="add-bib-form">
+            <h3><i class="fas fa-plus-circle"></i> Adicionar à Biblioteca</h3>
+            <div class="form-row">
+                <input id="bib-titulo" placeholder="Título do material">
+                <select id="bib-tipo">
+                    <option value="livro">📘 Livro</option>
+                    <option value="manual">📋 Manual</option>
+                    <option value="teste">📝 Teste</option>
+                    <option value="resumo">✏️ Resumo</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <input id="bib-autor" placeholder="Autor / Fonte">
+                <select id="bib-cadeira-sel"></select>
+            </div>
+            <div class="form-row">
+                <input id="bib-desc" placeholder="Descrição breve">
+                <input id="bib-link" placeholder="Link de download (URL ou #)">
+            </div>
+            <button class="btn btn-green btn-sm" onclick="addBib()"><i class="fas fa-plus"></i> Adicionar Material</button>
+        </div>
+        <div id="bib-admin-list"></div>
+    </div>
+
+    <!-- UTILIZADORES -->
+    <div class="admin-panel" id="ap-utilizadores">
+        <div style="overflow-x:auto">
+            <table class="user-table" id="userTable">
+                <thead><tr><th>Nome</th><th>Email</th><th>Função</th><th>Acção</th></tr></thead>
+                <tbody id="userTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div></div>
+
+<!-- FOOTER -->
+<footer id="mainFooter" style="display:none">
+    <div class="footer-inner">
+        <div><h3>BioEdu</h3><p style="font-size:.85rem;line-height:1.7">Plataforma educativa da Licenciatura em Ensino de Biologia da Universidade Rovuma.</p></div>
+        <div><h3>Navegação</h3>
+            <a onclick="go('sobre',null)">Sobre o Curso</a>
+            <a onclick="go('disciplinas',null)">Disciplinas</a>
+            <a onclick="go('biblioteca',null)">Biblioteca</a>
+            <a onclick="go('assistente',null)">Assistente IA</a>
+        </div>
+        <div><h3>Contacto</h3>
+            <a><i class="fas fa-map-marker-alt"></i> Campus Universitário, Rovuma</a>
+            <a><i class="fas fa-envelope"></i> bioedu@urovuma.ac.mz</a>
+        </div>
+    </div>
+    <div class="footer-bottom">© BioEdu – Universidade Rovuma. Todos os direitos reservados.</div>
+</footer>
+
+<script>
+/* ─── AUTH ─── */
+const USERS_KEY = 'bioedu_users';
+const SESSION_KEY = 'bioedu_session';
+
+function getUsers() {
+    const raw = localStorage.getItem(USERS_KEY);
+    if (!raw) {
+        const defaults = [
+            { id:1, name:'Administrador', email:'admin@bioedu.mz', pass:'admin123', role:'admin' },
+            { id:2, name:'Utilizador Demo', email:'user@bioedu.mz', pass:'user123', role:'user' }
+        ];
+        localStorage.setItem(USERS_KEY, JSON.stringify(defaults));
+        return defaults;
+    }
+    return JSON.parse(raw);
+}
+
+function saveUsers(u) { localStorage.setItem(USERS_KEY, JSON.stringify(u)); }
+function getSession() { const s=localStorage.getItem(SESSION_KEY); return s?JSON.parse(s):null; }
+function saveSession(u) { localStorage.setItem(SESSION_KEY, JSON.stringify(u)); }
+
+let currentUser = null;
+
+function doLogin() {
+    const email = document.getElementById('l-email').value.trim();
+    const pass  = document.getElementById('l-pass').value;
+    const users = getUsers();
+    const u = users.find(x => x.email===email && x.pass===pass);
+    if (!u) { showErr('l-err','Email ou password incorrectos.'); return; }
+    currentUser = u;
+    saveSession(u);
+    enterApp();
+}
+
+function doRegister() {
+    const name  = document.getElementById('r-name').value.trim();
+    const email = document.getElementById('r-email').value.trim();
+    const pass  = document.getElementById('r-pass').value;
+    if (!name||!email||!pass) { showErr('r-err','Preenche todos os campos.'); return; }
+    if (pass.length < 6) { showErr('r-err','Password deve ter pelo menos 6 caracteres.'); return; }
+    const users = getUsers();
+    if (users.find(x=>x.email===email)) { showErr('r-err','Este email já está registado.'); return; }
+    const newUser = { id: Date.now(), name, email, pass, role:'user' };
+    users.push(newUser);
+    saveUsers(users);
+    currentUser = newUser;
+    saveSession(newUser);
+    enterApp();
+}
+
+function doLogout() {
+    localStorage.removeItem(SESSION_KEY);
+    currentUser = null;
+    document.getElementById('loginScreen').style.display='flex';
+    document.getElementById('mainNav').style.display='none';
+    document.getElementById('homeHero').style.display='none';
+    document.getElementById('mainFooter').style.display='none';
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+}
+
+function enterApp() {
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('mainNav').style.display='';
+    document.getElementById('mainFooter').style.display='';
+    document.getElementById('navAdmin').style.display = currentUser.role==='admin' ? '' : 'none';
+    document.getElementById('navUser').innerHTML = `<i class="fas fa-user-circle"></i> <span>${currentUser.name}</span>`;
+    go('home', null);
+}
+
+function showErr(id, msg) {
+    const el=document.getElementById(id);
+    el.textContent=msg; el.style.display='block';
+    setTimeout(()=>el.style.display='none', 3500);
+}
+
+function lTab(name, btn) {
+    document.getElementById('lp-login').style.display = name==='login'?'':'none';
+    document.getElementById('lp-register').style.display = name==='register'?'':'none';
+    document.querySelectorAll('.ltab').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+}
+
+/* ─── DATA ─── */
+const db = {
+    disciplinas:{ 1:[], 2:[] },
+    aulas:[],
+    biblioteca:[]
+};
+let nextDiscId=1, nextAulaId=1, nextBibId=1;
+
+/* ─── NAVIGATION ─── */
+const PAGES=['home','sobre','disciplinas','biblioteca','quiz','assistente','recursos','admin'];
+
+function go(page, linkEl) {
+    if (page==='admin' && currentUser?.role!=='admin') return;
+    document.getElementById('homeHero').style.display = page==='home'?'':'none';
+    PAGES.forEach(p=>{
+        const el=document.getElementById('page-'+p);
+        if(el) el.classList.toggle('active', p===page);
+    });
+    document.querySelectorAll('.nav-links a[data-page]').forEach(a=>{
+        a.classList.toggle('active', a.dataset.page===page);
+    });
+    document.getElementById('navLinks').classList.remove('open');
+    if(page==='quiz') initQuiz();
+    if(page==='disciplinas') renderDiscView();
+    if(page==='biblioteca') renderBib('todos');
+    if(page==='admin') renderAdmin();
+    if(page==='assistente') checkApiKey();
+    window.scrollTo({top:0,behavior:'smooth'});
+    return false;
+}
+
+function toggleMenu() { document.getElementById('navLinks').classList.toggle('open'); }
+
+/* ─── SEMESTER TABS ─── */
+function showSem(n,btn) {
+    ['sp1','sp2'].forEach((id,i)=>document.getElementById(id).classList.toggle('active',i+1===n));
+    btn.closest('.disc-wrapper').querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+}
+function showAdminSem(n,btn) {
+    ['asp1','asp2'].forEach((id,i)=>document.getElementById(id).classList.toggle('active',i+1===n));
+    btn.closest('.disc-wrapper').querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+}
+
+/* ─── DISCIPLINAS VIEW ─── */
+function renderDiscView() {
+    [1,2].forEach(sem=>{
+        const c=document.getElementById('disc-list-'+sem);
+        const discs=db.disciplinas[sem];
+        if(!discs.length){c.innerHTML='<p style="color:var(--muted);padding:1.2rem;font-size:.88rem;">Nenhuma cadeira adicionada ainda.</p>';return;}
+        c.innerHTML=discs.map(d=>`
+            <div class="disc-item">
+                <span class="disc-code">${esc(d.code)}</span>
+                <div class="disc-info"><h4>${esc(d.name)}</h4><span>${esc(d.desc)}</span></div>
+                <span class="disc-credits">${d.credits} Cr</span>
+            </div>
+            ${renderAulasForDisc(d.id)}`).join('');
+    });
+}
+
+function renderAulasForDisc(discId) {
+    const aulas=db.aulas.filter(a=>a.discId===discId);
+    if(!aulas.length) return '';
+    return `<div class="aulas-section" style="padding:0 .5rem 1rem 4rem">
+        <div class="aulas-list">${aulas.map((a,i)=>`
+            <div class="aula-card">
+                <div class="aula-num">${i+1}</div>
+                <div class="aula-body"><h4>${esc(a.titulo)}</h4><p>${esc(a.desc)}</p>
+                ${a.data?`<div class="aula-meta"><i class="fas fa-calendar-alt"></i> ${a.data}</div>`:''}
+                </div>
+            </div>`).join('')}
+        </div></div>`;
+}
+
+/* ─── ADMIN ─── */
+function renderAdmin() {
+    renderStats(); renderAdminDiscs(1); renderAdminDiscs(2);
+    refreshAulaDiscSelect(); renderAulasAdminList();
+    renderBibAdmin(); renderBibCadeiraSelect();
+    renderUsersTable();
+}
+
+function renderStats() {
+    const total=db.disciplinas[1].length+db.disciplinas[2].length;
+    document.getElementById('statsRow').innerHTML=`
+        <div class="stat-card"><div class="num">${db.disciplinas[1].length}</div><div class="lbl">Cadeiras 1º Sem</div></div>
+        <div class="stat-card"><div class="num">${db.disciplinas[2].length}</div><div class="lbl">Cadeiras 2º Sem</div></div>
+        <div class="stat-card"><div class="num">${db.aulas.length}</div><div class="lbl">Aulas</div></div>
+        <div class="stat-card"><div class="num">${db.biblioteca.length}</div><div class="lbl">Materiais</div></div>
+        <div class="stat-card"><div class="num">${getUsers().length}</div><div class="lbl">Utilizadores</div></div>`;
+}
+
+function renderAdminDiscs(sem) {
+    const c=document.getElementById('admin-disc-'+sem);
+    const discs=db.disciplinas[sem];
+    if(!discs.length){c.innerHTML='<p style="color:var(--muted);padding:.8rem;font-size:.85rem;">Sem cadeiras neste semestre.</p>';return;}
+    c.innerHTML=discs.map(d=>`
+        <div class="disc-item">
+            <span class="disc-code">${esc(d.code)}</span>
+            <div class="disc-info"><h4>${esc(d.name)}</h4><span>${esc(d.desc)}</span></div>
+            <span class="disc-credits">${d.credits} Cr</span>
+            <div class="disc-actions"><button class="btn-icon danger" onclick="removeDisc(${sem},${d.id})"><i class="fas fa-trash"></i></button></div>
+        </div>`).join('');
+}
+
+function addDisc(sem) {
+    const code=document.getElementById(`nd${sem}-code`).value.trim();
+    const name=document.getElementById(`nd${sem}-name`).value.trim();
+    const desc=document.getElementById(`nd${sem}-desc`).value.trim();
+    const credits=parseInt(document.getElementById(`nd${sem}-cr`).value)||0;
+    if(!code||!name){alert('Preenche o Código e o Nome.');return;}
+    db.disciplinas[sem].push({id:nextDiscId++,code,name,desc,credits});
+    [`nd${sem}-code`,`nd${sem}-name`,`nd${sem}-desc`,`nd${sem}-cr`].forEach(id=>document.getElementById(id).value='');
+    renderAdmin();
+}
+
+function removeDisc(sem,id) {
+    if(!confirm('Remover esta cadeira?')) return;
+    db.disciplinas[sem]=db.disciplinas[sem].filter(d=>d.id!==id);
+    db.aulas=db.aulas.filter(a=>a.discId!==id);
+    renderAdmin();
+}
+
+/* ─── AULAS ─── */
+function refreshAulaDiscSelect() {
+    const sem=parseInt(document.getElementById('aula-sem').value);
+    const el=document.getElementById('aula-disc');
+    el.innerHTML=db.disciplinas[sem].map(d=>`<option value="${d.id}">${esc(d.name)}</option>`).join('')||'<option value="">— Adiciona cadeiras primeiro —</option>';
+}
+document.getElementById('aula-sem').addEventListener('change',refreshAulaDiscSelect);
+
+function addAula() {
+    const sem=parseInt(document.getElementById('aula-sem').value);
+    const discId=parseInt(document.getElementById('aula-disc').value);
+    const titulo=document.getElementById('aula-titulo').value.trim();
+    const desc=document.getElementById('aula-desc').value.trim();
+    const data=document.getElementById('aula-data').value;
+    if(!titulo){alert('Escreve o título da aula.');return;}
+    if(!discId){alert('Seleciona uma cadeira.');return;}
+    db.aulas.push({id:nextAulaId++,sem,discId,titulo,desc,data});
+    ['aula-titulo','aula-desc','aula-data'].forEach(id=>document.getElementById(id).value='');
+    renderAdmin();
+}
+
+function removeAula(id) {
+    db.aulas=db.aulas.filter(a=>a.id!==id);
+    renderAdmin();
+}
+
+function renderAulasAdminList() {
+    const el=document.getElementById('aulas-admin-list');
+    if(!db.aulas.length){el.innerHTML='<p style="color:var(--muted);font-size:.85rem;padding:.5rem 0;">Sem aulas registadas.</p>';return;}
+    el.innerHTML='<div class="aulas-list mt1">'+db.aulas.map((a,i)=>{
+        const disc=findDisc(a.discId);
+        return `<div class="aula-card" style="align-items:center">
+            <div class="aula-num">${i+1}</div>
+            <div class="aula-body">
+                <h4>${esc(a.titulo)} <span style="font-weight:400;color:var(--muted);font-size:.8rem">· ${disc?esc(disc.name):'?'} (${a.sem}º Sem)</span></h4>
+                ${a.desc?`<p>${esc(a.desc)}</p>`:''}
+                ${a.data?`<div class="aula-meta"><i class="fas fa-calendar-alt"></i> ${a.data}</div>`:''}
+            </div>
+            <button class="btn-icon danger" onclick="removeAula(${a.id})"><i class="fas fa-trash"></i></button>
+        </div>`;
+    }).join('')+'</div>';
+}
+
+function findDisc(id) {
+    for(let s of [1,2]){const d=db.disciplinas[s].find(d=>d.id===id);if(d)return d;}
+    return null;
+}
+
+function aTab(name,btn) {
+    document.querySelectorAll('.admin-panel').forEach(p=>p.classList.remove('active'));
+    document.getElementById('ap-'+name).classList.add('active');
+    document.querySelectorAll('.a-tab').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    if(name==='biblioteca') renderBibAdmin();
+    if(name==='utilizadores') renderUsersTable();
+}
+
+/* ─── BIBLIOTECA ─── */
+function renderBibCadeiraSelect() {
+    const all=[...db.disciplinas[1],...db.disciplinas[2]];
+    const el=document.getElementById('bib-cadeira-sel');
+    el.innerHTML='<option value="">— Sem cadeira específica —</option>'+all.map(d=>`<option value="${d.id}">${esc(d.name)}</option>`).join('');
+}
+
+function addBib() {
+    const titulo=document.getElementById('bib-titulo').value.trim();
+    const tipo=document.getElementById('bib-tipo').value;
+    const autor=document.getElementById('bib-autor').value.trim();
+    const discId=document.getElementById('bib-cadeira-sel').value;
+    const desc=document.getElementById('bib-desc').value.trim();
+    const link=document.getElementById('bib-link').value.trim()||'#';
+    if(!titulo){alert('Escreve o título do material.');return;}
+    db.biblioteca.push({id:nextBibId++,titulo,tipo,autor,discId:discId?parseInt(discId):null,desc,link});
+    ['bib-titulo','bib-autor','bib-desc','bib-link'].forEach(id=>document.getElementById(id).value='');
+    renderBibAdmin();
+    renderStats();
+}
+
+function removeBib(id) {
+    db.biblioteca=db.biblioteca.filter(b=>b.id!==id);
+    renderBibAdmin(); renderStats();
+}
+
+function renderBibAdmin() {
+    const el=document.getElementById('bib-admin-list');
+    if(!db.biblioteca.length){el.innerHTML='<p style="color:var(--muted);font-size:.85rem;padding:.5rem 0;">Sem materiais na biblioteca.</p>';return;}
+    el.innerHTML='<div class="biblioteca-grid">'+db.biblioteca.map(b=>`
+        <div class="bib-card">
+            <span class="bib-type ${b.tipo}">${b.tipo}</span>
+            <h4>${esc(b.titulo)}</h4>
+            <p>${esc(b.autor||'')} ${b.desc?'· '+esc(b.desc):''}</p>
+            <div class="bib-card-footer">
+                <span class="bib-cadeira">${b.discId?esc(findDisc(b.discId)?.name||''):'Geral'}</span>
+                <button class="btn-icon danger" onclick="removeBib(${b.id})"><i class="fas fa-trash"></i></button>
+            </div>
+        </div>`).join('')+'</div>';
+}
+
+let currentFilter='todos';
+function filterBib(tipo,btn) {
+    currentFilter=tipo;
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    if(btn) btn.classList.add('active');
+    renderBib(tipo);
+}
+
+function renderBib(tipo) {
+    const grid=document.getElementById('bibGrid');
+    const items=tipo==='todos'?db.biblioteca:db.biblioteca.filter(b=>b.tipo===tipo);
+    if(!items.length){
+        grid.innerHTML=`<div class="bib-empty" style="grid-column:1/-1"><i class="fas fa-book-open"></i><p>${tipo==='todos'?'A biblioteca está vazia. O administrador pode adicionar materiais.':'Sem materiais deste tipo.'}</p></div>`;
+        return;
+    }
+    grid.innerHTML=items.map(b=>`
+        <div class="bib-card">
+            <span class="bib-type ${b.tipo}">${b.tipo}</span>
+            <h4>${esc(b.titulo)}</h4>
+            <p>${b.autor?esc(b.autor):''}${b.desc?' · '+esc(b.desc):''}</p>
+            <div class="bib-card-footer">
+                <span class="bib-cadeira">${b.discId?esc(findDisc(b.discId)?.name||''):'Geral'}</span>
+                <a href="${esc(b.link)}" target="_blank" class="bib-download"><i class="fas fa-download"></i> Aceder</a>
+            </div>
+        </div>`).join('');
+}
+
+/* ─── UTILIZADORES ADMIN ─── */
+function renderUsersTable() {
+    const users=getUsers();
+    document.getElementById('userTableBody').innerHTML=users.map(u=>`
+        <tr>
+            <td>${esc(u.name)}</td>
+            <td>${esc(u.email)}</td>
+            <td><span class="role-badge ${u.role}">${u.role==='admin'?'Administrador':'Utilizador'}</span></td>
+            <td>${u.id!==currentUser.id?`<button class="btn btn-sm ${u.role==='admin'?'btn-red':'btn-green'}" onclick="toggleRole(${u.id})">${u.role==='admin'?'Remover Admin':'Tornar Admin'}</button>`:'<span style="color:var(--muted);font-size:.8rem">Tu</span>'}</td>
+        </tr>`).join('');
+}
+
+function toggleRole(id) {
+    const users=getUsers();
+    const u=users.find(x=>x.id===id);
+    if(u){u.role=u.role==='admin'?'user':'admin';saveUsers(users);renderUsersTable();renderStats();}
+}
+
+/* ─── QUIZ ─── */
+const quizData=[
+    {q:"Qual é a unidade básica de todos os organismos vivos?",opts:["Átomo","Molécula","Célula","Tecido"],ans:2,exp:"A célula é a unidade fundamental da vida."},
+    {q:"Quem é considerado o 'pai da genética'?",opts:["Darwin","Mendel","Pasteur","Fleming"],ans:1,exp:"Gregor Mendel (1822–1884) estabeleceu as leis da hereditariedade."},
+    {q:"Qual processo celular produz ATP nas mitocôndrias?",opts:["Fotossíntese","Fermentação","Respiração celular","Glicólise"],ans:2,exp:"A respiração celular nas mitocôndrias produz ATP."},
+    {q:"Qual mecanismo explica a adaptação das espécies?",opts:["Seleção natural","Herança adquirida","Mutacionismo","Catastrofismo"],ans:0,exp:"A seleção natural, proposta por Darwin, é o mecanismo principal."},
+    {q:"Qual é a função principal dos ribossomas?",opts:["Produção de energia","Síntese de proteínas","Armazenamento de lípidos","Digestão intracelular"],ans:1,exp:"Os ribossomas traduzem RNA mensageiro em proteínas."}
+];
+let qIdx=0,qScore=0,qAnswered=false;
+
+function initQuiz(){qIdx=0;qScore=0;loadQ();}
+function loadQ(){
+    qAnswered=false;
+    const q=quizData[qIdx];
+    document.getElementById('qNum').textContent=`${qIdx+1} / ${quizData.length}`;
+    document.getElementById('progFill').style.width=`${((qIdx+1)/quizData.length)*100}%`;
+    document.getElementById('quizBody').innerHTML=`
+        <div class="q-text">${q.q}</div>
+        <div class="q-options">${q.opts.map((o,i)=>`<div class="q-opt" onclick="pickOpt(${i})"><i class="far fa-circle"></i><span>${o}</span></div>`).join('')}</div>
+        <div class="q-explain" id="qExplain"></div>`;
+}
+function pickOpt(i){
+    if(qAnswered)return;qAnswered=true;
+    const q=quizData[qIdx];
+    document.querySelectorAll('.q-opt').forEach((el,idx)=>{
+        el.style.pointerEvents='none';
+        if(idx===q.ans){el.classList.add('correct');el.querySelector('i').className='fas fa-check-circle';}
+        else if(idx===i){el.classList.add('wrong');el.querySelector('i').className='fas fa-times-circle';}
+    });
+    if(i===q.ans)qScore++;
+    const exp=document.getElementById('qExplain');
+    exp.style.display='block';
+    exp.innerHTML=`<strong>💡</strong> ${q.exp}<br><br><button class="btn btn-green btn-sm" onclick="nextQ()">${qIdx<quizData.length-1?'Próxima ➜':'Ver Resultado'}</button>`;
+}
+function nextQ(){qIdx++;if(qIdx<quizData.length)loadQ();else showScore();}
+function showScore(){
+    const pct=Math.round((qScore/quizData.length)*100);
+    const msg=pct>=80?'🎉 Excelente!':pct>=60?'👍 Bom trabalho!':'📚 Continua a estudar!';
+    document.getElementById('progFill').style.width='100%';
+    document.getElementById('quizBody').innerHTML=`<div class="score-wrap"><div class="score-circle">${pct}%</div><h3>${qScore} de ${quizData.length} corretas</h3><p>${msg}</p><button class="btn btn-green" onclick="initQuiz()">Tentar Novamente</button></div>`;
+}
+
+/* ─── ASSISTENTE IA ─── */
+const aiMsgs=document.getElementById('aiMessages');
+function appendMsg(role,html){
+    const div=document.createElement('div');
+    div.className='msg '+role;
+    div.innerHTML=`<div class="msg-icon"><i class="fas fa-${role==='bot'?'robot':'user'}"></i></div><div class="msg-bubble">${html}</div>`;
+    aiMsgs.appendChild(div);aiMsgs.scrollTop=aiMsgs.scrollHeight;return div;
+}
+function showTyping(){return appendMsg('bot','<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>');}
+async function sendAI(){
+    const input=document.getElementById('aiInput');
+    const text=input.value.trim();if(!text)return;
+    input.value='';appendMsg('user',esc(text));const typing=showTyping();
+    try{
+        const apiKey = document.getElementById('apiKeyInput')?.value?.trim() || localStorage.getItem('bioedu_apikey') || '';
+        if(!apiKey){typing.remove();appendMsg('bot','⚠️ Chave de API não configurada. Insere a tua chave do Google Gemini na caixa acima.');return;}
+        const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,{
+            method:'POST',headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({
+                contents:[{parts:[{text:`És o BioAssistente da Universidade Rovuma, especialista em biologia para estudantes da Licenciatura em Ensino de Biologia. Respondes sempre em Português de Moçambique. Usas linguagem clara, pedagógica e motivadora. Quando pedido, fazes resumos estruturados. Podes usar emojis científicos com moderação.\n\nPergunta do estudante: ${text}`}]}],
+                generationConfig:{maxOutputTokens:1000}
+            })
+        });
+        const data=await res.json();
+        if(data.error){typing.remove();appendMsg('bot','⚠️ Erro: '+esc(data.error.message));return;}
+        const reply=data.candidates?.[0]?.content?.parts?.[0]?.text||'Sem resposta.';
+        typing.remove();
+        appendMsg('bot',esc(reply).replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>'));
+    }catch(e){typing.remove();appendMsg('bot','⚠️ Erro de ligação: '+esc(e.message)+'. Se estás a abrir o ficheiro localmente, hospeda-o no Netlify para a IA funcionar.');}
+}
+function chipSend(text){document.getElementById('aiInput').value=text;sendAI();}
+function saveApiKey(){
+    const key=document.getElementById('apiKeyInput').value.trim();
+    if(!key){alert('Escreve a chave de API.');return;}
+    localStorage.setItem('bioedu_apikey',key);
+    document.getElementById('apiKeyBox').style.display='none';
+    appendMsg('bot','✅ Chave guardada! Já podes usar o assistente.');
+}
+function checkApiKey(){
+    const key=localStorage.getItem('bioedu_apikey');
+    if(!key) document.getElementById('apiKeyBox').style.display='block';
+}
+
+/* ─── UTILS ─── */
+function esc(str){return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+/* ─── INIT ─── */
+const session=getSession();
+if(session){currentUser=session;enterApp();}
+</script>
+</body>
+</html>
